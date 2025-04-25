@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gym Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.0.7/dist/full.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    .sidebar-item.active {
+      background-color: hsl(var(--p) / 0.2);
+      border-left: 4px solid hsl(var(--p));
+    }
+    .sidebar-item:hover:not(.active) {
+      background-color: hsl(var(--b3));
+    }
+    .card {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body class="flex min-h-screen bg-gray-50">
+  <!-- Sidebar -->
+  <aside class="w-64 h-screen bg-base-100 shadow-md fixed">
+    <div class="p-4 flex items-center gap-2 border-b">
+      <i class="fas fa-dumbbell text-2xl text-primary"></i>
+      <h1 class="text-2xl font-bold">Admin</h1>
+    </div>
+    <ul class="menu p-4">
+      <li class="sidebar-item active"><a href="#members" class="flex items-center gap-2"><i class="fas fa-users"></i> Members</a></li>
+      <li class="sidebar-item"><a href="#trainers" class="flex items-center gap-2"><i class="fas fa-user-tie"></i> Trainers</a></li>
+      <li class="sidebar-item"><a href="#schedule" class="flex items-center gap-2"><i class="fas fa-calendar-alt"></i> Gym Schedule</a></li>
+      <li class="sidebar-item"><a href="#analytics" class="flex items-center gap-2"><i class="fas fa-chart-line"></i> Gym Analytics</a></li>
+    </ul>
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t">
+      <div class="flex items-center gap-2">
+        <div class="avatar">
+          <div class="w-10 rounded-full bg-primary text-white flex items-center justify-center">
+            <span>AD</span>
+          </div>
+        </div>
+        <div>
+          <p class="font-medium">Admin User</p>
+          <p class="text-xs opacity-70">Super Admin</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 p-8 ml-64">
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold">Dashboard Overview</h1>
+      <div class="flex gap-2">
+        <div class="form-control">
+          <input type="text" placeholder="Search..." class="input input-bordered" />
+        </div>
+        <button class="btn btn-ghost btn-circle">
+          <i class="fas fa-bell"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="card-title text-primary">Total Members</h2>
+              <p class="text-3xl font-bold">350</p>
+              <p class="text-sm text-success">+12 this week</p>
+            </div>
+            <div class="p-3 rounded-full bg-primary bg-opacity-20 text-primary">
+              <i class="fas fa-users text-2xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="card-title text-secondary">Active Trainers</h2>
+              <p class="text-3xl font-bold">15</p>
+              <p class="text-sm text-success">+2 this month</p>
+            </div>
+            <div class="p-3 rounded-full bg-secondary bg-opacity-20 text-secondary">
+              <i class="fas fa-user-tie text-2xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="card-title text-accent">Monthly Revenue</h2>
+              <p class="text-3xl font-bold">$45,000</p>
+              <p class="text-sm text-success">+8% from last month</p>
+            </div>
+            <div class="p-3 rounded-full bg-accent bg-opacity-20 text-accent">
+              <i class="fas fa-dollar-sign text-2xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members View -->
+    <section id="members" class="mb-10 bg-base-100 rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold flex items-center gap-2">
+          <i class="fas fa-users text-primary"></i> Members Management
+        </h2>
+        <button class="btn btn-primary">
+          <i class="fas fa-plus mr-2"></i> Add New Member
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Member</th>
+              <th>Contact</th>
+              <th>Package</th>
+              <th>Trainer</th>
+              <th>Membership</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>M001</td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar">
+                    <div class="w-10 rounded-full bg-neutral text-neutral-content">
+                      <span>JD</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="font-bold">John Doe</div>
+                    <div class="text-sm opacity-50">Since Jan 2023</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                johndoe@email.com<br>
+                <span class="text-sm opacity-70">(555) 123-4567</span>
+              </td>
+              <td>Premium</td>
+              <td>Sarah Smith</td>
+              <td>Annual</td>
+              <td><span class="badge badge-success">Active</span></td>
+              <td>
+                <button class="btn btn-ghost btn-xs"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-ghost btn-xs"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>M002</td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar">
+                    <div class="w-10 rounded-full bg-neutral text-neutral-content">
+                      <span>AS</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="font-bold">Alice Smith</div>
+                    <div class="text-sm opacity-50">Since Mar 2023</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                alice@email.com<br>
+                <span class="text-sm opacity-70">(555) 987-6543</span>
+              </td>
+              <td>Standard</td>
+              <td>Mike Johnson</td>
+              <td>Monthly</td>
+              <td><span class="badge badge-warning">Suspended</span></td>
+              <td>
+                <button class="btn btn-ghost btn-xs"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-ghost btn-xs"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="divider">OR</div>
+      
+      <h3 class="text-lg font-semibold mb-4">Register New Member</h3>
+      <form class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Member ID</span>
+          </label>
+          <input type="text" placeholder="Auto-generated" class="input input-bordered" disabled />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Member Name</span>
+          </label>
+          <input type="text" placeholder="Full name" class="input input-bordered" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input type="email" placeholder="Email address" class="input input-bordered" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Phone</span>
+          </label>
+          <input type="tel" placeholder="Phone number" class="input input-bordered" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Package</span>
+          </label>
+          <select class="select select-bordered">
+            <option disabled selected>Select package</option>
+            <option>Basic</option>
+            <option>Standard</option>
+            <option>Premium</option>
+            <option>VIP</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Trainer</span>
+          </label>
+          <select class="select select-bordered">
+            <option disabled selected>Assign trainer</option>
+            <option>Sarah Smith</option>
+            <option>Mike Johnson</option>
+            <option>Alex Wong</option>
+            <option>None</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Membership Type</span>
+          </label>
+          <select class="select select-bordered">
+            <option disabled selected>Select membership</option>
+            <option>Monthly Membership</option>
+            <option>Annual Membership</option>
+            <option>Pay-as-you-go</option>
+            <option>Day Pass</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Membership Period</span>
+          </label>
+          <div class="flex gap-2">
+            <input type="date" class="input input-bordered flex-1" placeholder="Start date" />
+            <input type="date" class="input input-bordered flex-1" placeholder="End date" />
+          </div>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Status</span>
+          </label>
+          <select class="select select-bordered">
+            <option>Active</option>
+            <option>Expired</option>
+            <option>Suspended</option>
+          </select>
+        </div>
+        <div class="form-control md:col-span-2">
+          <button class="btn btn-primary">
+            <i class="fas fa-save mr-2"></i> Save Member
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Trainers View -->
+    <section id="trainers" class="mb-10 bg-base-100 rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold flex items-center gap-2">
+          <i class="fas fa-user-tie text-secondary"></i> Trainers Management
+        </h2>
+        <button class="btn btn-secondary">
+          <i class="fas fa-plus mr-2"></i> Add New Trainer
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="table w-full">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Trainer</th>
+              <th>Contact</th>
+              <th>Specialization</th>
+              <th>Experience</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>T001</td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar">
+                    <div class="w-10 rounded-full bg-neutral text-neutral-content">
+                      <span>SS</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="font-bold">Sarah Smith</div>
+                    <div class="text-sm opacity-50">Personal Trainer</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                sarah@email.com<br>
+                <span class="text-sm opacity-70">(555) 234-5678</span>
+              </td>
+              <td>Weight Training</td>
+              <td>5 years</td>
+              <td>
+                <button class="btn btn-ghost btn-xs"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-ghost btn-xs"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td>T002</td>
+              <td>
+                <div class="flex items-center gap-3">
+                  <div class="avatar">
+                    <div class="w-10 rounded-full bg-neutral text-neutral-content">
+                      <span>MJ</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="font-bold">Mike Johnson</div>
+                    <div class="text-sm opacity-50">Yoga Instructor</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                mike@email.com<br>
+                <span class="text-sm opacity-70">(555) 345-6789</span>
+              </td>
+              <td>Yoga & Pilates</td>
+              <td>3 years</td>
+              <td>
+                <button class="btn btn-ghost btn-xs"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-ghost btn-xs"><i class="fas fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="divider">OR</div>
+      
+      <h3 class="text-lg font-semibold mb-4">Register New Trainer</h3>
+      <form class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Trainer ID</span>
+          </label>
+          <input type="text" placeholder="Auto-generated" class="input input-bordered" disabled />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Trainer Name</span>
+          </label>
+          <input type="text" placeholder="Full name" class="input input-bordered" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input type="email" placeholder="Email address" class="input input-bordered" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Phone</span>
+          </label>
+          <input type="tel" placeholder="Phone number" class="input input-bordered" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Membership Type</span>
+          </label>
+          <select class="select select-bordered">
+            <option disabled selected>Select membership</option>
+            <option>Personal Training Bundle</option>
+            <option>Corporate Membership</option>
+            <option>Month-to-Month</option>
+            <option>Student/Senior Membership</option>
+          </select>
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Specialization</span>
+          </label>
+          <input type="text" placeholder="e.g., Yoga, Weight Training" class="input input-bordered" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Experience</span>
+          </label>
+          <input type="text" placeholder="Years of experience" class="input input-bordered" />
+        </div>
+        <div class="form-control md:col-span-2">
+          <button class="btn btn-secondary">
+            <i class="fas fa-save mr-2"></i> Save Trainer
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Gym Schedule View -->
+    <section id="schedule" class="mb-10 bg-base-100 rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold flex items-center gap-2">
+          <i class="fas fa-calendar-alt text-accent"></i> Gym Schedule
+        </h2>
+        <div class="flex gap-2">
+          <button class="btn btn-accent">
+            <i class="fas fa-print mr-2"></i> Print Schedule
+          </button>
+          <button class="btn btn-accent">
+            <i class="fas fa-sync mr-2"></i> Refresh
+          </button>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Weekly Timetable</h3>
+          <div class="overflow-x-auto">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Monday</th>
+                  <th>Tuesday</th>
+                  <th>Wednesday</th>
+                  <th>Thursday</th>
+                  <th>Friday</th>
+                  <th>Saturday</th>
+                  <th>Sunday</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>6:00-7:00</td>
+                  <td>Yoga</td>
+                  <td>HIIT</td>
+                  <td>Pilates</td>
+                  <td>Spinning</td>
+                  <td>Zumba</td>
+                  <td>Yoga</td>
+                  <td>Closed</td>
+                </tr>
+                <tr>
+                  <td>7:00-8:00</td>
+                  <td>HIIT</td>
+                  <td>Spinning</td>
+                  <td>Zumba</td>
+                  <td>Yoga</td>
+                  <td>Pilates</td>
+                  <td>HIIT</td>
+                  <td>Closed</td>
+                </tr>
+                <tr>
+                  <td>8:00-9:00</td>
+                  <td>Open Gym</td>
+                  <td>Open Gym</td>
+                  <td>Open Gym</td>
+                  <td>Open Gym</td>
+                  <td>Open Gym</td>
+                  <td>Open Gym</td>
+                  <td>Closed</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-4">
+            <button class="btn btn-accent">
+              <i class="fas fa-edit mr-2"></i> Edit Timetable
+            </button>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold mb-4">Calendar</h3>
+          <div class="card bg-base-200">
+            <div class="card-body">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold">April 2023</h3>
+                <div class="flex gap-2">
+                  <button class="btn btn-circle btn-sm">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <button class="btn btn-circle btn-sm">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="grid grid-cols-7 gap-1 text-center">
+                <div class="font-bold text-sm">Sun</div>
+                <div class="font-bold text-sm">Mon</div>
+                <div class="font-bold text-sm">Tue</div>
+                <div class="font-bold text-sm">Wed</div>
+                <div class="font-bold text-sm">Thu</div>
+                <div class="font-bold text-sm">Fri</div>
+                <div class="font-bold text-sm">Sat</div>
+                
+                <!-- Calendar days would be dynamically generated -->
+                <div class="py-2">26</div>
+                <div class="py-2">27</div>
+                <div class="py-2">28</div>
+                <div class="py-2">29</div>
+                <div class="py-2">30</div>
+                <div class="py-2">31</div>
+                <div class="py-2">1</div>
+                
+                <div class="py-2">2</div>
+                <div class="py-2">3</div>
+                <div class="py-2">4</div>
+                <div class="py-2">5</div>
+                <div class="py-2">6</div>
+                <div class="py-2">7</div>
+                <div class="py-2">8</div>
+                
+                <div class="py-2">9</div>
+                <div class="py-2">10</div>
+                <div class="py-2 bg-primary text-primary-content rounded-full">11</div>
+                <div class="py-2">12</div>
+                <div class="py-2">13</div>
+                <div class="py-2">14</div>
+                <div class="py-2">15</div>
+                
+                <div class="py-2">16</div>
+                <div class="py-2">17</div>
+                <div class="py-2">18</div>
+                <div class="py-2">19</div>
+                <div class="py-2">20</div>
+                <div class="py-2">21</div>
+                <div class="py-2">22</div>
+                
+                <div class="py-2">23</div>
+                <div class="py-2">24</div>
+                <div class="py-2">25</div>
+                <div class="py-2">26</div>
+                <div class="py-2">27</div>
+                <div class="py-2">28</div>
+                <div class="py-2">29</div>
+                
+                <div class="py-2">30</div>
+                <div class="py-2">1</div>
+                <div class="py-2">2</div>
+                <div class="py-2">3</div>
+                <div class="py-2">4</div>
+                <div class="py-2">5</div>
+                <div class="py-2">6</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-3 h-3 rounded-full bg-primary"></div>
+              <span class="text-sm">Special Event</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-3 h-3 rounded-full bg-secondary"></div>
+              <span class="text-sm">Holiday/Closed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gym Analytics View -->
+    <section id="analytics" class="bg-base-100 rounded-lg shadow p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-semibold flex items-center gap-2">
+          <i class="fas fa-chart-line text-info"></i> Gym Analytics
+        </h2>
+        <div class="flex gap-2">
+          <select class="select select-bordered select-sm">
+            <option>Last 7 days</option>
+            <option>Last 30 days</option>
+            <option selected>Last 90 days</option>
+            <option>This year</option>
+          </select>
+          <button class="btn btn-sm btn-info">
+            <i class="fas fa-download mr-2"></i> Export
+          </button>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="card-title text-primary">Total Members</h2>
+                <p class="text-3xl font-bold">350</p>
+                <p class="text-sm text-success">+12 this week</p>
+              </div>
+              <div class="p-3 rounded-full bg-primary bg-opacity-20 text-primary">
+                <i class="fas fa-users text-2xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="card-title text-secondary">Active Trainers</h2>
+                <p class="text-3xl font-bold">15</p>
+                <p class="text-sm text-success">+2 this month</p>
+              </div>
+              <div class="p-3 rounded-full bg-secondary bg-opacity-20 text-secondary">
+                <i class="fas fa-user-tie text-2xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="card-title text-accent">Total Revenue</h2>
+                <p class="text-3xl font-bold">$45,000</p>
+                <p class="text-sm text-success">+8% from last month</p>
+              </div>
+              <div class="p-3 rounded-full bg-accent bg-opacity-20 text-accent">
+                <i class="fas fa-dollar-sign text-2xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <h2 class="card-title">Membership Distribution</h2>
+            <canvas id="membershipChart" width="400" height="250"></canvas>
+          </div>
+        </div>
+        <div class="card bg-base-100 shadow">
+          <div class="card-body">
+            <h2 class="card-title">Revenue Trends</h2>
+            <canvas id="revenueChart" width="400" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card bg-base-100 shadow">
+        <div class="card-body">
+          <h2 class="card-title">Attendance Heatmap</h2>
+          <div class="overflow-x-auto">
+            <table class="table table-zebra">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Monday</th>
+                  <th>Tuesday</th>
+                  <th>Wednesday</th>
+                  <th>Thursday</th>
+                  <th>Friday</th>
+                  <th>Saturday</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>6:00-8:00</td>
+                  <td><div class="badge badge-primary">High</div></td>
+                  <td><div class="badge badge-primary">High</div></td>
+                  <td><div class="badge badge-secondary">Medium</div></td>
+                  <td><div class="badge badge-primary">High</div></td>
+                  <td><div class="badge badge-secondary">Medium</div></td>
+                  <td><div class="badge badge-accent">Low</div></td>
+                </tr>
+                <tr>
+                  <td>8:00-10:00</td>
+                  <td><div class="badge badge-secondary">Medium</div></td>
+                  <td><div class="badge badge-secondary">Medium</div></td>
+                  <td><div class="badge badge-accent">Low</div></td>
+                  <td><div class="badge badge-secondary">Medium</div></td>
+                  <td><div class="badge badge-accent">Low</div></td>
+                  <td><div class="badge badge-primary">High</div></td>
+                </tr>
+                <tr>
+                  <td>10:00-12:00</td>
+                  <td><div class="badge badge-accent">Low</div></td>
+                  <td><div class="badge badge-accent">Low</div></td>
+                  <td><div class="badge badge-accent">Low</div></td>
+                  <td><div class="badge badge-accent">Low</div></td>
+                  <td><div class="badge badge-accent">Low</div></td>
+                  <td><div class="badge badge-secondary">Medium</div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Membership Distribution Chart
+    const membershipCtx = document.getElementById('membershipChart').getContext('2d');
+    new Chart(membershipCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Monthly', 'Annual', 'Pay-as-you-go', 'Day Pass'],
+        datasets: [{
+          data: [120, 80, 100, 50],
+          backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { 
+            position: 'right',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: ${value} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // Revenue Trends Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    new Chart(revenueCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Monthly Revenue',
+          data: [32000, 38000, 42000, 45000, 41000, 47000],
+          backgroundColor: 'rgba(59, 130, 246, 0.2)',
+          borderColor: 'rgba(59, 130, 246, 1)',
+          borderWidth: 2,
+          tension: 0.3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            ticks: {
+              callback: function(value) {
+                return '$' + value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // Sidebar navigation highlighting
+    document.querySelectorAll('.sidebar-item a').forEach(link => {
+      link.addEventListener('click', function() {
+        document.querySelectorAll('.sidebar-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        this.parentElement.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
